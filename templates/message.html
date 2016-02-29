@@ -1,0 +1,90 @@
+
+{% if flashes %}
+    {% for flash in flashes %}
+
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                <div class="transp-box">
+                    <div class="padding_10px">
+                        {% if message_signup_1 %}
+                            <h4 class="message_page">
+                                <strong>{{user.name}}</strong> is still logged in. Please log out to signup another user.
+                            </h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_signup_2' %}
+                            <h4 class="message_page">
+                                Welcome <strong>{{user.name}}</strong>. Your account has been created.
+                            </h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_login_1' %}
+                            <h4 class="message_page">
+                                <strong>{{user.name}}</strong> is still logged in. Please log out to login another user.
+                            </h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_login_2' %}
+                            <h4 class="message_page">Welcome <strong>{{user.name}}</strong>.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_forgot_password_1' %}
+                            <h4 class="message_page">
+                                <strong>{{user.name}}</strong> is still logged in. If you want to reset a password, please logout first. 
+                            </h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_forgot_password_2' %}
+                            <h4 class="message_page">An email with a link to reset the password has been sent to <strong>{{input_email}}</strong>.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_reset_password_1' %}
+                            <h4 class="message_page"><strong>{{user.name}}</strong> is still logged in. If you want to reset a password, please logout first.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_reset_password_2' %}
+                            <h4 class="message_page">This link is not valid.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_reset_password_3' %}
+                            <h4 class="message_page">
+                                More than one hour has past since your password reset. Please klick on 'Forgot password' again.
+                            </h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_reset_password_4' %}
+                            <h4 class="message_page">Link is not valid.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_reset_password_5' %}
+                            <h4 class="message_page">An error has occurred. Please contact us via email.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_reset_password_6' %}
+                            <h4 class="message_page">Plesae klick on the link in the email sent to you to reset your password. </h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_reset_password_7' %}
+                            <h4 class="message_page">Password changed.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_user_settings_1' %}
+                            <h4 class="message_page">Please login.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_logout_1' %}
+                            <h4 class="message_page">Logout successful.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_delete_account_1' %}
+                            <h4 class="message_page">Account deleted! A confirmation email has been sent to <strong>{{deleted_email}}</strong>.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_send_email_1' %}
+                            <h4 class="message_page">Please login.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_new_article_1' %}
+                            <h4 class="message_page">Please login to create a new article.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_edit_article_1' %}
+                            <h4 class="message_page">Please login to edit an article.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_edit_article_2' %}
+                            <h4 class="message_page">You have no permission to edit this article.</h4>
+                        {% endif %}
+                        {% if flash[0] == 'message_delete_article' %}
+                            <h4 class="message_page">Article deleted.</h4>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+    {% endfor %}
+{% endif %}
+
+

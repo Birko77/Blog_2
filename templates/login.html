@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    Login
+{% endblock page_title %}
+
+{% block head %}
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="//apis.google.com/js/platform.js?onload=start"></script>
+    <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
+{% endblock head %}
+
+{% block back_link %}
+    <a class="custom_link_navbar" href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a>
+{% endblock back_link %}
+
+
+{% block content %}
+    <br>
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <div class="text-box">
+                <h1><strong>Login</strong></h1>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="transp-box padding_10px">
+                <div class="row">
+                    <div class="col-sm-4 text-center">
+                        <!-- GOOGLE PLUS SIGN IN BUTTON-->
+                        <div id="googleSignInButton" class="sign_in_button">
+                            <span class="g-signin"
+                                data-scope="openid email"
+                                data-clientid="{YOUR GOOGLE CLIENT_ID HERE}"
+                                data-redirecturi="postmessage"
+                                data-accesstype="offline"
+                                data-cookiepolicy="single_host_origin"
+                                data-callback="signInCallback"
+                                data-approvalprompt="force">
+                            </span>
+                        </div>
+                        <!--END GOOGLE PLUS SIGN IN BUTTON -->
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        <!-- FACEBOOK SIGN IN BUTTON -->
+                        <div id="FBSignInButton" class="sign_in_button">
+                            <fb:login-button scope="public_profile,email" size="large" onlogin="sendTokenToServer();">
+                                <a href='javascript:sendTokenToServer()'>Sign in</a>
+                            </fb:login-button>
+                        </div>
+                        <!-- END FACEBOOK SIGN IN BUTTON -->
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        <!-- TWITTER SIGN IN BUTTON -->
+                        <div id="twitterSignInButton" class="sign_in_button">
+                            <form action="/tconnect" method="get">
+                                <input type="hidden" name="state" value="{{state}}">
+                                <input type="image" src="/static/images/sign-in-with-twitter-gray.png"></input>
+                            </form>
+                        </div>
+                        <!-- END TWITTER SIGN IN BUTTON -->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 text-center">
+                        <div id="result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="transp-box">
+                <br>
+                <form class="form-horizontal" method="post" role="form">
+                    <div class="form-group">
+                        <label for="inputEmail" class="col-sm-2 control-label">Email</label>
+                        <div class="col-sm-10">
+                            <input type="email" class="form-control" id="inputEmail" placeholder="Email" name="email" value="{{email_form}}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword" class="col-sm-2 control-label">Password</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" maxlength="20" id="inputPassword" placeholder="Password" name="password">
+                            <a class="blue-text" href="/login/forgot_password">Forgot password</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="g-recaptcha col-sm-offset-2 col-sm-1" data-sitekey="6LfKjBQTAAAAAPllOlh4yhNz0xx2wyuYzZ22IuLi"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <input type="hidden" name="state" value="{{state}}">
+                            <button type="submit" class="btn btn-default">Login</button><br>
+                            {% if error %}
+                                <span class="error_message">Login was not successful.<br>Please try again or klick on 'Forgot password'.</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br>
+
+{% endblock content %}
+
+{% block javascript %}
+
+    <!--GOOGLE PLUS SIGN IN -->
+    <script>
+    function signInCallback(authResult) {
+        if (authResult['code']) {
+            // Hide the sign-in button now that the user is authorized
+            $('#googleSignInButton').attr('style', 'display: none');
+            $('#FBSignInButton').attr('style', 'display: none');
+            $('#twitterSignInButton').attr('style', 'display: none');
+            // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
+            $.ajax({
+                type: 'POST',
+                url: '/gconnect?state={{state}}',
+                processData: false,
+                data: authResult['code'],
+                contentType: 'application/octet-stream; charset=utf-8',
+                success: function(result) {
+                    // Handle or verify the server response if necessary.
+                    if (result) {
+                        $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+                        setTimeout(function() {
+                            window.location.href = "/";
+                        }, 4000);
+                      
+                    } else if (authResult['error']) {
+                        console.log('There was an error: ' + authResult['error']);
+                    } else {
+                        $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                    }
+                }
+                  
+            });
+        } 
+    }
+    </script>
+    <!--END GOOGLE PLUS SIGN IN -->
+
+
+
+    <!--FACEBOOK SIGN IN -->
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId      : '{YOUR FACEBOOK APP ID HERE}',
+                cookie     : true,  // enable cookies to allow the server to access 
+                                    // the session
+                xfbml      : true,  // parse social plugins on this page
+                version    : 'v2.2' // use version 2.2
+            });
+        };
+        // Load the SDK asynchronously
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+        // Here we run a very simple test of the Graph API after login is
+        // successful.  See statusChangeCallback() for when this call is made.
+        function sendTokenToServer() {
+            $('#googleSignInButton').attr('style', 'display: none');
+            $('#FBSignInButton').attr('style', 'display: none');
+            $('#twitterSignInButton').attr('style', 'display: none');
+            var access_token = FB.getAuthResponse()['accessToken'];
+            console.log(access_token)
+            console.log('Welcome!  Fetching your information.... ');
+            FB.api('/me', function(response) {
+                console.log('Successful login for: ' + response.name);
+                $.ajax({
+                    type: 'POST',
+                    url: '/fbconnect?state={{state}}',
+                    processData: false,
+                    data: access_token,
+                    contentType: 'application/octet-stream; charset=utf-8',
+                    success: function(result) {
+                        // Handle or verify the server response if necessary.
+                        if (result) {
+                            $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+                            setTimeout(function() {
+                                window.location.href = "/";
+                            }, 4000);
+                          
+                        } else {
+                            $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                        }
+                    }
+              
+                });
+            });
+    }
+    </script>
+    <!-- END FACEBOOK SIGN IN -->
+
+
+    
+{% endblock javascript %}
